@@ -1,4 +1,5 @@
 ansible-btsync
 ==============
 
-Ansible playbooks for deploing and updating btsync nodes
+Ansible playbooks for deploying and updating btsync nodes
+All code is Ubuntu specific

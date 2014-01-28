@@ -1,0 +1,6 @@
+---
+# handlers for firewall
+- name: reload ufw
+  debug: msg="Are you enable ufw already ? Uncomment line below then"
+  #  command: ufw reload
+  

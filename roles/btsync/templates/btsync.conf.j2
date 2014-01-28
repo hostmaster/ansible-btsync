@@ -1,0 +1,12 @@
+{
+  "device_name": "{{ ansible_fqdn }}",
+  "listening_port" : {{ btsync_port }}, 
+  "storage_path" : "{{ btsync_home }}/.sync",
+  "pid_file" : "{{ btsync_home }}/.sync/btsync.pid",
+  "check_for_updates" : true,
+  "use_upnp" : false,
+  "download_limit" : 0,
+  "upload_limit" : 0,
+  "shared_folders" :
+       {{ btsync_shared_folders | to_nice_json }} 
+}

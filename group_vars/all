@@ -1,0 +1,15 @@
+---
+timezone: Etc/UTC
+
+btsync_user: btsync
+
+btsync_port: 5999
+btsync_home: /home/{{ btsync_user }}
+
+btsync_shared_folders:
+  - { dir: "{{ btsync_home }}/Folder_one",
+      secret:  PUTYOURLONGMAGICSECRETHERE
+    }
+  - { dir: "{{ btsync_home }}/Folder_Two",
+      secret: PUTYOURLONGMAGICSECRETHERE
+    }

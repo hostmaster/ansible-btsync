@@ -1,0 +1,5 @@
+---
+- name: Setup btsync node(s) 
+  user: root
+  roles:
+    - btsync

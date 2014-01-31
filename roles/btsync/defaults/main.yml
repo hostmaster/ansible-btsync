@@ -1,4 +1,9 @@
 btsync_port: 5999
+
+btsync_listen: "127.0.0.1:8888"
+#btsync_web_login: "admin"
+#btsync_web_passwd: "password"
+
 btsync_home: "/home/{{ btsync_user }}"
 
 btsync_dist: "{{ btsync_home }}"

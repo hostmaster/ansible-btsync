@@ -3,5 +3,6 @@
 # You should enable ufw and set ufw_is_enabled value somewhere
 # unless notification will do nothing
 # You should enable ufw and set ufw_is_enabled value somewhere to enable following action
+- name: reload ufw
   command: ufw reload
   when: ufw_is_enabled

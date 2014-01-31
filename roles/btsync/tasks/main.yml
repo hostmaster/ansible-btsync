@@ -2,25 +2,25 @@
 
 - name: This playbook is for Ubuntu only so far
   fail: msg="this is Ubuntu only sorry"
-  "'${ansible_distribution}' != 'ubuntu'"
+  when: ansible_distribution != 'Ubuntu'
   
 - name: Create folder for binary
   file: path="{{ btsync_dist  }}" mode=0755 state=directory
 
-- name: Unzip btsync binary
-  shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
 
 - name: Download btsync tarball
   get_url: url="{{ btsync_url[ansible_architecture] }}"
            dest=/var/tmp/btsync.tgz
+
+- name: Unzip btsync binary
+  shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
 
 - name: Create user 
   user: name="{{ btsync_user }}"
         shell="{{ btsync_shell }}"
         state=present
         system=no
-  with_items: ${btsync_user}
-
+ 
 - name: Create home folder and shares 
   file: path="{{ item.dir }}"
         owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0755

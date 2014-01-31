@@ -2,7 +2,6 @@
 
 btsync_user: btsync
 
-
 # these setting will disable web ui in btsync 
 btsync_shared_folders:
   - { dir: "{{ btsync_home }}/Folder_one",

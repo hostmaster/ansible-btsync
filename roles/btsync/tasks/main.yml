@@ -1,9 +1,11 @@
 ---
 
+- name: This playbook is for Ubuntu only so far
+  fail: msg="this is Ubuntu only sorry"
+  "'${ansible_distribution}' != 'ubuntu'"
+  
 - name: Create folder for binary
-  file: path="{{ item.dir }}" mode=0755 state=directory
-  with_items:
-    - { dir: "{{ btsync_dist }}" }
+  file: path="{{ btsync_dist  }}" mode=0755 state=directory
 
 - name: Unzip btsync binary
   shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync

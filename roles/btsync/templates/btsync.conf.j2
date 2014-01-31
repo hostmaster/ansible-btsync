@@ -6,10 +6,19 @@
   "check_for_updates" : true,
   "use_upnp" : false,
   "download_limit" : 0,
-  "upload_limit" : 0
+  "upload_limit" : 0,
   {% if btsync_shared_folders is defined %}
-  ,
   "shared_folders" :
        {{ btsync_shared_folders | to_nice_json }}
+  {%else%}
+  "webui" : 
+  {
+      "listen" : "{{ btsync_listen }}"
+      {% if btsync_web_login is defined %}
+      ,
+      "login" :    "{{  btsync_web_login }}",
+      "password" : "{{ btsync_web_passwd }}"
+      {% endif %}
+  }
   {% endif %}
 }

@@ -18,7 +18,7 @@ respawn
 respawn limit 5 20
 
 script
-    exec {{ btsync_dist }} --nodaemon --config {{ btsync_conf }}
+    exec {{ btsync_dist }}/btsync --nodaemon --config {{ btsync_conf }}
 end script
  
 pre-stop script

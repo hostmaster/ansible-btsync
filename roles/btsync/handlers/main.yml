@@ -1,6 +1,7 @@
 ---
 # handlers for firewall
-- name: reload ufw
-  debug: msg="Are you enable ufw already ? Uncomment line below then"
-  #  command: ufw reload
-  
+# You should enable ufw and set ufw_is_enabled value somewhere
+# unless notification will do nothing
+# You should enable ufw and set ufw_is_enabled value somewhere to enable following action
+  command: ufw reload
+  when: ufw_is_enabled

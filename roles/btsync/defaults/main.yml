@@ -1,3 +1,9 @@
+btsync_port: 5999
+btsync_home: /home/{{ btsync_user }}
+
+btsync_dist: {{ btsync_home }}
+btsync_pid: {{ btsync_home }}/.sync/btsync.pid
+btsync_conf: {{ btsync_home }}/btsync.conf
 
 btsync_url:
   i386:   http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-i386/track/stable

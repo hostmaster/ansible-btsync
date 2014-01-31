@@ -1,6 +1,18 @@
 ---
 
-- name: Create folders if needed 
+- name: Create folder for binary
+  file: path="{{ item.dir }}" mode=0755 state=directory
+  with_items:
+    - { dir: "{{ btsync_dist }}" }
+
+- name: Unzip btsync binary
+  shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
+
+- name: Download btsync tarball
+  get_url: url="{{ btsync_url[ansible_architecture] }}"
+           dest=/var/tmp/btsync.tgz
+  
+- name: Create home folder and shares 
   file: path="{{ item.dir }}"
         owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0755
         state=directory
@@ -9,30 +21,21 @@
     - { dir: "{{ btsync_home }}/.sync" }
     - ${btsync_shared_folders}
                     
-- name: Download btsync tarball
-  get_url: url="{{ btsync_url[ansible_architecture] }}"
-           dest=/var/tmp/btsync.tgz
-
-## TODO:              
-#- shell: btsync --help | grep ^BitTorrent | cut -f 3 -d ' '
-#  register: remote_btsync_version 
-
-- name: Unzip btsync binary
-  shell: tar xvz -C "{{ btsync_home }}" -f /var/tmp/btsync.tgz btsync
-
-- name: Template configuration files
+- name: Template configuration files 
   template: src="{{ item.src }}" dest="{{ item.dst }}" mode="{{ item.m }}" backup=yes 
   with_items:
     - { src: 'ufw.j2',          dst: '/etc/ufw/applications.d/btsync', m: '0640' }
-    - { src: 'btsync.conf.j2',  dst: "{{ btsync_home }}/btsync.conf",  m: '0640' }
+    - { src: 'btsync.conf.j2',  dst: "{{ btsync_conf }}",              m: '0640' }
     - { src: 'upstart.j2',      dst: "/etc/init/btsync.conf",          m: '0640' }
   notify:
     - reload ufw
-     
+    
+# You should enable ufw and set ufw_is_enabled value somewhere
+# unless notification will do nothing
 - name: Configure firewall
   command: ufw allow 'BTSync' 
   notify: reload ufw
-   
+  
 - name: Check for btsync process
   command: pgrep -fc btsync
   ignore_errors: yes
@@ -41,4 +44,6 @@
 - name: Start btsync 
   command: "start btsync"
   when: pgrep.rc > 0
-  
+
+- name: Encure btsync service is up and running 
+  service: name=btsync state=started

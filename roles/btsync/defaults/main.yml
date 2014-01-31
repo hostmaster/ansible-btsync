@@ -5,6 +5,8 @@ btsync_dist: {{ btsync_home }}
 btsync_pid: {{ btsync_home }}/.sync/btsync.pid
 btsync_conf: {{ btsync_home }}/btsync.conf
 
+btsync_shell: /usr/sbin/nologin
+
 btsync_url:
   i386:   http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-i386/track/stable
   x86_64: http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-x64/track/stable

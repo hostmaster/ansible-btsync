@@ -11,7 +11,6 @@
 - name: Download btsync tarball
   get_url: url="{{ btsync_url[ansible_architecture] }}"
            dest=/var/tmp/btsync.tgz
-
 - name: Unzip btsync binary
   shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
 
@@ -29,15 +28,23 @@
     - { dir: "{{ btsync_home }}" }
     - { dir: "{{ btsync_home }}/.sync" }
     - ${btsync_shared_folders}
-                    
-- name: Template configuration files 
-  template: src="{{ item.src }}" dest="{{ item.dst }}" mode="{{ item.m }}" backup=yes 
-  with_items:
-    - { src: 'ufw.j2',          dst: '/etc/ufw/applications.d/btsync', m: '0640' }
-    - { src: 'btsync.conf.j2',  dst: "{{ btsync_conf }}",              m: '0640' }
-    - { src: 'upstart.j2',      dst: "/etc/init/btsync.conf",          m: '0640' }
+
+- name: Template btsync configuration file
+  template: src=btsync.conf.j2 dest="{{ btsync_conf }}"
+          owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0640
+          backup=yes 
+  notify:
+    - restart btsync
+
+- name: Template ufw configuration
+  template: src=ufw.j2 dest=/etc/ufw/applications.d/btsync mode=0640 backup=yes 
   notify:
     - reload ufw
+
+- name: Template upstart configuration
+  template: src=upstart.j2 dest=/etc/init/btsync.conf mode=0640 backup=yes 
+  notify:
+    - restart btsync
     
 # You should enable ufw and set ufw_is_enabled value somewhere
 # unless notification will do nothing

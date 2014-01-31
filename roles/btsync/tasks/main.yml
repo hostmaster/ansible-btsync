@@ -28,7 +28,8 @@
     - { dir: "{{ btsync_home }}" }
     - { dir: "{{ btsync_home }}/.sync" }
     - ${btsync_shared_folders}
-
+  when: item is defined and item.dir
+    
 - name: Template btsync configuration file
   template: src=btsync.conf.j2 dest="{{ btsync_conf }}"
           owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0640

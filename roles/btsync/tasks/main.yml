@@ -67,7 +67,7 @@
 - name: Configure firewall
   command: ufw allow 'BTSync' 
   notify: reload ufw
-  when: ufw_is_enabled
+  when: ufw_is_enabled.changed
   
 - name: Check for btsync process
   command: pgrep -fc btsync
@@ -76,7 +76,7 @@
 
 - name: Start btsync 
   command: "start btsync"
-  when: pgrep.rc > 0
+  when: pgrep.rc is defined and pgrep.rc > 0
 
 - name: Encure btsync service is up and running 
   service: name=btsync state=started

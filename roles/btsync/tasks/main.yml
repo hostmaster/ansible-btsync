@@ -59,9 +59,10 @@
   command: ufw status 
   register: ufw_status
 
-- name: Is firewall enabled
+- debug: msg="Is firewall enabled"
   register: ufw_is_enabled
-  when: ufw_status.stdout.find('Status: inactive') != -1 
+  when: ufw_status.stdout is defined and
+        ufw_status.stdout.find("inactive") != -1 
 
 - name: Configure firewall
   command: ufw allow 'BTSync' 

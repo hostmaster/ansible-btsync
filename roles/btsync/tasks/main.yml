@@ -5,16 +5,18 @@
   when: ansible_distribution != 'Ubuntu'
   
 - name: Create folder for binary
-  file: path="{{ btsync_dist  }}"
+  file: path="{{ btsync_dist  }}" recurse=yes
         owner=root group=root mode=0755
         state=directory
 
 - name: Download btsync tarball
   get_url: url="{{ btsync_url[ansible_architecture] }}"
            dest=/var/tmp/btsync.tgz
-
+  register: tarball_downloaded
+           
 - name: Unzip btsync binary
   shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
+  when: tarball_downloaded|changed
 
 - name: Create user 
   user: name="{{ btsync_user }}"
@@ -23,11 +25,10 @@
         system=no
  
 - name: Create home folder and shares 
-  file: path="{{ item.dir }}"
-        owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0755
+  file: path="{{ item.dir }}" recurse=yes
+        owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0750
         state=directory
   with_items:
-    - { dir: "{{ btsync_home }}" }
     - { dir: "{{ btsync_home }}/.sync" }
     - ${btsync_shared_folders}
   when: item is defined and item.dir

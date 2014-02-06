@@ -40,14 +40,6 @@
   notify:
     - restart btsync
 
-- name: Template ufw configuration
-  template: src=ufw.j2
-            dest=/etc/ufw/applications.d/btsync
-            owner=root group=root mode=0640
-            backup=yes 
-  notify:
-    - reload ufw
-
 - name: Template upstart configuration
   template: src=upstart.j2
             dest=/etc/init/btsync.conf
@@ -56,18 +48,28 @@
     - restart btsync
 
 - name: Get UFW status output
-  command: ufw status 
+  shell: ufw status 
   register: ufw_status
 
-- debug: msg="Is firewall enabled"
+- name: Is firewall enabled
+  shell: /bin/true
   register: ufw_is_enabled
-  when: ufw_status.stdout is defined and
-        ufw_status.stdout.find("inactive") != -1 
+  when: 'ufw_status.stdout_lines[0] == "Status: active"'
+
+- name: Template ufw configuration
+  template: src=ufw.j2
+            dest=/etc/ufw/applications.d/btsync
+            owner=root group=root mode=0640
+            backup=yes 
+  when: ufw_is_enabled|changed
+  notify:
+    - reload ufw
 
 - name: Configure firewall
   command: ufw allow 'BTSync' 
-  notify: reload ufw
-  when: ufw_is_enabled.changed
+  when: ufw_is_enabled|changed
+  notify:
+    - reload ufw
   
 - name: Check for btsync process
   command: pgrep -fc btsync
@@ -76,7 +78,7 @@
 
 - name: Start btsync 
   command: "start btsync"
-  when: pgrep.rc is defined and pgrep.rc > 0
+  when: pgrep.rc == 1
 
 - name: Encure btsync service is up and running 
   service: name=btsync state=started

@@ -5,12 +5,14 @@
   when: ansible_distribution != 'Ubuntu'
   
 - name: Create folder for binary
-  file: path="{{ btsync_dist  }}" mode=0755 state=directory
-
+  file: path="{{ btsync_dist  }}"
+        owner=root group=root mode=0755
+        state=directory
 
 - name: Download btsync tarball
   get_url: url="{{ btsync_url[ansible_architecture] }}"
            dest=/var/tmp/btsync.tgz
+
 - name: Unzip btsync binary
   shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
 
@@ -31,27 +33,40 @@
   when: item is defined and item.dir
     
 - name: Template btsync configuration file
-  template: src=btsync.conf.j2 dest="{{ btsync_conf }}"
-          owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0640
-          backup=yes 
+  template: src=btsync.conf.j2
+            dest="{{ btsync_conf }}"
+            owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0640
+            backup=yes 
   notify:
     - restart btsync
 
 - name: Template ufw configuration
-  template: src=ufw.j2 dest=/etc/ufw/applications.d/btsync mode=0640 backup=yes 
+  template: src=ufw.j2
+            dest=/etc/ufw/applications.d/btsync
+            owner=root group=root mode=0640
+            backup=yes 
   notify:
     - reload ufw
 
 - name: Template upstart configuration
-  template: src=upstart.j2 dest=/etc/init/btsync.conf mode=0640 backup=yes 
+  template: src=upstart.j2
+            dest=/etc/init/btsync.conf
+            owner=root group=root mode=0640 backup=yes 
   notify:
     - restart btsync
-    
-# You should enable ufw and set ufw_is_enabled value somewhere
-# unless notification will do nothing
+
+- name: Get UFW status output
+  command: ufw status 
+  register: ufw_status
+
+- name: Is firewall enabled
+  register: ufw_is_enabled
+  when: ufw_status.stdout.find('Status: inactive') != -1 
+
 - name: Configure firewall
   command: ufw allow 'BTSync' 
   notify: reload ufw
+  when: ufw_is_enabled
   
 - name: Check for btsync process
   command: pgrep -fc btsync

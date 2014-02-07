@@ -15,6 +15,24 @@ btsync_shell: "/usr/sbin/nologin"
 ufw_is_enabled: 0
 
 btsync_url:
-  i386:   http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-i386/track/stable
-  x86_64: http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-x64/track/stable
-  arm:    http://download-lb.utorrent.com/endpoint/btsync/os/linux-arm/track/stable
+  i386:   http://download-lb.utorrent.com/endpoint/btsync/os/{{ ansible_system|lower }}-glibc23-i386/track/stable
+  x86_64: http://download-lb.utorrent.com/endpoint/btsync/os/{{ ansible_system|lower }}-glibc23-x64/track/stable
+  arm:    http://download-lb.utorrent.com/endpoint/btsync/os/{{ ansible_system|lower }}-arm/track/stable
+
+  # Works!
+  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-i386/track/stable
+  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-x64/track/stable
+
+  # http://download-lb.utorrent.com/endpoint/btsync/os/FreeBSD-i386/track/stable
+  # http://download-lb.utorrent.com/endpoint/btsync/os/FreeBSD-x64/track/stable
+
+  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-arm/track/stable
+
+  # Does't 
+  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-i386/track/stable
+  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-x64/track/stable
+
+  # ??
+  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-powerpc/track/stable
+  
+  

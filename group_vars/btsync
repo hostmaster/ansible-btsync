@@ -1,12 +1,16 @@
 ---
 
 btsync_user: btsync
+btsync_home: "/home/{{ btsync_user }}"
 
-# these setting will disable web ui in btsync 
-btsync_shared_folders:
-  - { dir: "{{ btsync_home }}/Folder_one",
+btsync_settings: 
+  device_name: "{{ ansible_fqdn }}"
+  listening_port : 5999
+  pid_file : "{{ btsync_home }}/.sync/btsync.pid"
+  storage_path : "{{ btsync_home }}/.sync"
+  use_upnp : false
+  shared_folders : 
+    - dir: "{{ btsync_home }}/Folder_one"
       secret: PUTYOURLONGMAGICSECRETHERE
-    }
-  - { dir: "{{ btsync_home }}/Folder_Two",
+    - dir: "{{ btsync_home }}/Folder_Two"
       secret: PUTYOURLONGMAGICSECRETHERE
-    }

@@ -24,13 +24,13 @@
         state=present
         system=no
  
-- name: Create home folder and shares 
+- name: Create storage folder and shares 
   file: path="{{ item.dir }}" recurse=yes
         owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0750
         state=directory
   with_items:
-    - { dir: "{{ btsync_home }}/.sync" }
-    - ${btsync_shared_folders}
+    - { dir: "{{ btsync_settings.storage_path }}" }
+    - ${btsync_settings.shared_folders}
   when: item is defined and item.dir
     
 - name: Template btsync configuration file

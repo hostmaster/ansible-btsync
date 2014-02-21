@@ -5,8 +5,6 @@ btsync_conf: "{{ btsync_home }}/btsync.conf"
 
 btsync_shell: "/usr/sbin/nologin"
 
-ufw_is_enabled: 0
-
 #btsync_settings: 
 #  device_name: {{ ansible_fqdn }}
 #  listening_port : 0
@@ -28,24 +26,3 @@ ufw_is_enabled: 0
 #      known_hosts :
 #        - 192.168.1.2:44444
 #        - 192.168.1.10:5555
-
-btsync_url:
-  i386:   http://download-lb.utorrent.com/endpoint/btsync/os/{{ ansible_system }}-glibc23-i386/track/stable
-  x86_64: http://download-lb.utorrent.com/endpoint/btsync/os/{{ ansible_system }}-glibc23-x64/track/stable
-  arm:    http://download-lb.utorrent.com/endpoint/btsync/os/{{ ansible_system }}-arm/track/stable
-
-  # it works!
-  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-i386/track/stable
-  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-glibc23-x64/track/stable
-
-  # http://download-lb.utorrent.com/endpoint/btsync/os/FreeBSD-i386/track/stable
-  # http://download-lb.utorrent.com/endpoint/btsync/os/FreeBSD-x64/track/stable
-
-  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-arm/track/stable
-
-  # Does't 
-  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-i386/track/stable
-  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-x64/track/stable
-
-  # ??
-  # http://download-lb.utorrent.com/endpoint/btsync/os/linux-powerpc/track/stable

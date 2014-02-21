@@ -22,5 +22,5 @@ script
 end script
  
 pre-stop script
-    kill $(cat {{ btsync_settings.pidfile }})
+    kill $(cat {{ btsync_settings.pid_file }})
 end script

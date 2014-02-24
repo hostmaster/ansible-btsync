@@ -15,7 +15,7 @@ All other variables are optional. Full list of optional variable are in `btsync/
 btsync daemon configuration follows the structure of the original JSON configuration
 All variable are the same but in YAML format. 
 
-Example
+Examples
 ==============
 
 ```yaml
@@ -30,8 +30,21 @@ Example
              storage_path : "{{ btsync_home }}/.sync"
              use_upnp : false
              shared_folders : 
-                 - dir: "{{ btsync_home }}/Folder_one"
+                - dir: "{{ btsync_home }}/Folder_one"
                   secret: PUTYOURLONGMAGICSECRETHERE
                 - dir: "{{ btsync_home }}/Folder_Two"
                   secret: PUTYOURLONGMAGICSECRETHERE
+```
+
+```yaml
+    roles:
+       - role: btsync
+         btsync_user: btsync
+         btsync_settings: 
+             device_name: "{{ ansible_fqdn }}" 
+             pid_file : "{{ btsync_home }}/.sync/btsync.pid"
+             storage_path : "{{ btsync_home }}/.sync"
+             webui:
+                 listen : "127.0.0.1:8888"
+            
 ```

@@ -56,7 +56,7 @@
 - name: Is firewall enabled
   shell: /bin/true
   register: ufw_is_enabled
-  when: 'ufw_status.stdout_lines[0] == "Status: active" and ${btsync_settings.listening_port} != 0' 
+  when: 'ufw_status.stdout_lines[0] == "Status: active" and {{ btsync_settings.listening_port }} != 0' 
 
 - name: Template ufw configuration
   template: src=ufw.j2

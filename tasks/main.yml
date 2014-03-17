@@ -1,7 +1,7 @@
 ---
 
-- name: This playbook is for Ubuntu only so far
-  fail: msg="this is Ubuntu only sorry"
+- name: This playbook is for Ubuntu so far
+  debug: msg="Please be aware of some Ubuntu specific code in the playbook. Only Ubuntu is fully supported so far"
   when: ansible_distribution != 'Ubuntu'
   
 - name: Create folder for binary
@@ -17,6 +17,8 @@
 - name: Unzip btsync binary
   shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
   when: tarball_downloaded|changed
+  notify:
+    - restart btsync
 
 - name: Create user 
   user: name="{{ btsync_user }}"
@@ -30,7 +32,7 @@
         state=directory
   with_items:
     - { dir: "{{ btsync_settings.storage_path }}" }
-    - ${btsync_settings.shared_folders}
+    - {{ btsync_settings.shared_folders }}
   when: item is defined and item.dir
     
 - name: Template btsync configuration file
@@ -45,42 +47,20 @@
   template: src=upstart.j2
             dest=/etc/init/btsync.conf
             owner=root group=root mode=0640 backup=yes 
+  when: ansible_distribution == 'Ubuntu'
   notify:
     - restart btsync
 
-- name: Get UFW status output
-  shell: ufw status 
-  register: ufw_status
-
-  
-- name: Is firewall enabled
-  shell: /bin/true
-  register: ufw_is_enabled
-  when: 'ufw_status.stdout_lines[0] == "Status: active" and ${btsync_settings.listening_port} != 0' 
-
-- name: Template ufw configuration
+- name: Template BTSync profile for ufw
   template: src=ufw.j2
             dest=/etc/ufw/applications.d/btsync
             owner=root group=root mode=0640
             backup=yes 
-  when: ufw_is_enabled|changed
-  notify:
-    - reload ufw
+  when: ansible_distribution == 'Ubuntu'
 
-- name: Configure firewall
-  command: ufw allow 'BTSync' 
-  when: ufw_is_enabled|changed
-  notify:
-    - reload ufw
-  
-- name: Check for btsync process
-  command: pgrep -fc btsync
-  ignore_errors: yes
-  register: pgrep
-
-- name: Start btsync 
-  command: "start btsync"
-  when: pgrep.rc == 1
+- name: Create firewall rules
+  ufw: rule=allow name=BTSync
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Encure btsync service is up and running 
   service: name=btsync state=started

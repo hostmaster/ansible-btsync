@@ -32,7 +32,7 @@
         state=directory
   with_items:
     - { dir: "{{ btsync_settings.storage_path }}" }
-    - {{ btsync_settings.shared_folders }}
+    - "{{ btsync_settings.shared_folders }}"
   when: item is defined and item.dir
     
 - name: Template btsync configuration file

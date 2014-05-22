@@ -1,7 +1,7 @@
 ---
 
-- name: This playbook is for Ubuntu only so far
-  fail: msg="this is Ubuntu only sorry"
+- name: This playbook is for Ubuntu so far
+  debug: msg="Please be aware of some Ubuntu specific code in the playbook. Only Ubuntu is fully supported so far"
   when: ansible_distribution != 'Ubuntu'
   
 - name: Create folder for binary
@@ -22,8 +22,13 @@
            
 - name: Unzip btsync binary
   shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
+<<<<<<< HEAD
   when: btsync_version.stdout != btsync_current
   notify: 
+=======
+  when: tarball_downloaded|changed
+  notify:
+>>>>>>> 9c6be739fc26c2bf1f4011fa8fa504516237f6ba
     - restart btsync
 
 - name: Create user 
@@ -59,14 +64,20 @@
   template: src=upstart.j2
             dest=/etc/init/btsync.conf
             owner=root group=root mode=0640 backup=yes 
+  when: ansible_distribution == 'Ubuntu'
   notify:
     - restart btsync
 
+<<<<<<< HEAD
 - name: Template ufw configuration
+=======
+- name: Template BTSync profile for ufw
+>>>>>>> 9c6be739fc26c2bf1f4011fa8fa504516237f6ba
   template: src=ufw.j2
             dest=/etc/ufw/applications.d/btsync
             owner=root group=root mode=0640
             backup=yes 
+<<<<<<< HEAD
   notify:
     - reload ufw
 
@@ -75,5 +86,13 @@
   notify:
     - reload ufw
   
+=======
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Create firewall rules
+  ufw: rule=allow name=BTSync
+  when: ansible_distribution == 'Ubuntu'
+
+>>>>>>> 9c6be739fc26c2bf1f4011fa8fa504516237f6ba
 - name: Encure btsync service is up and running 
   service: name=btsync state=started

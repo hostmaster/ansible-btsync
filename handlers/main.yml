@@ -1,8 +1,6 @@
 ---
-# handlers for firewall
-
 - name: reload ufw
-  command: ufw reload
+  ufw: state=reloaded
 
 - name: restart btsync
   service: name=btsync state=restarted

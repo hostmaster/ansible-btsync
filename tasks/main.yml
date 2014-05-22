@@ -9,27 +9,41 @@
         owner=root group=root mode=0755
         state=directory
 
+- name: Read BTSync version
+  shell: "{{ btsync_dist }}/btsync --help | awk '/^BitTorrent/ { print $3 }'"
+  register: btsync_version
+  changed_when: false
+
 - name: Download btsync tarball
   get_url: url="{{ btsync_url[ansible_architecture] }}"
-           dest=/var/tmp/btsync.tgz
+           dest=/var/tmp/btsync.tgz force=yes
   register: tarball_downloaded
+  when: btsync_version.stdout != btsync_current
            
 - name: Unzip btsync binary
   shell: tar xz -C "{{ btsync_dist }}" -f /var/tmp/btsync.tgz btsync
-  when: tarball_downloaded|changed
+  when: btsync_version.stdout != btsync_current
+  notify: 
+    - restart btsync
 
 - name: Create user 
   user: name="{{ btsync_user }}"
         shell="{{ btsync_shell }}"
         state=present
         system=no
+
+- name: Create btsync working folder 
+  file: path="{{ item }}"
+        owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0750
+        state=directory
+  with_items:
+    - "{{ btsync_settings.storage_path }}"
  
-- name: Create storage folder and shares 
+- name: Create btsync shares 
   file: path="{{ item.dir }}" recurse=yes
         owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0750
         state=directory
   with_items:
-    - { dir: "{{ btsync_settings.storage_path }}" }
     - "{{ btsync_settings.shared_folders }}"
   when: item is defined and item.dir
     
@@ -48,39 +62,18 @@
   notify:
     - restart btsync
 
-- name: Get UFW status output
-  shell: ufw status 
-  register: ufw_status
-
-  
-- name: Is firewall enabled
-  shell: /bin/true
-  register: ufw_is_enabled
-  when: 'ufw_status.stdout_lines[0] == "Status: active" and {{ btsync_settings.listening_port }} != 0' 
-
 - name: Template ufw configuration
   template: src=ufw.j2
             dest=/etc/ufw/applications.d/btsync
             owner=root group=root mode=0640
             backup=yes 
-  when: ufw_is_enabled|changed
   notify:
     - reload ufw
 
-- name: Configure firewall
-  command: ufw allow 'BTSync' 
-  when: ufw_is_enabled|changed
+- name: Configure firewall for BTSync
+  ufw: rule=allow name='BTSync'
   notify:
     - reload ufw
   
-- name: Check for btsync process
-  command: pgrep -fc btsync
-  ignore_errors: yes
-  register: pgrep
-
-- name: Start btsync 
-  command: "start btsync"
-  when: pgrep.rc == 1
-
 - name: Encure btsync service is up and running 
   service: name=btsync state=started

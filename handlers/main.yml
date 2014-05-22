@@ -1,9 +1,6 @@
 ---
-<<<<<<< HEAD
 - name: reload ufw
   ufw: state=reloaded
 
-=======
->>>>>>> 9c6be739fc26c2bf1f4011fa8fa504516237f6ba
 - name: restart btsync
   service: name=btsync state=restarted

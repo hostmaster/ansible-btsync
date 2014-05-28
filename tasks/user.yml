@@ -1,0 +1,27 @@
+---
+
+- name: Create btsync user 
+  user: name="{{ btsync_user }}"
+    shell="{{ btsync_shell }}"
+    state=present
+    system=no
+
+- name: Create btsync working folder 
+  file: path="{{ item }}"
+    owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0750
+    state=directory
+  with_items: btsync_settings.storage_path
+ 
+- name: Create btsync shares 
+  file: path="{{ item.dir }}" recurse=yes
+    owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0750
+    state=directory
+  with_items:
+    - "{{ btsync_settings.shared_folders }}"
+  when: item is defined and item.dir
+
+- name: Template btsync configuration file
+  template: src=btsync.conf.j2 dest="{{ btsync_conf }}"
+    owner="{{ btsync_user }}" group="{{ btsync_user }}" mode=0640
+    backup=yes 
+  notify: restart btsync

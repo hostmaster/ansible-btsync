@@ -1,0 +1,28 @@
+---
+- name: Create folder for binary
+  file: path="{{ btsync_dist }}" recurse=yes
+    owner=root group=root mode=0755
+    state=directory
+
+- name: Read BTSync version
+  shell: >
+    {{ btsync_dist }}/btsync --help | awk '/^BitTorrent/ { print $3 }'
+  register: btsync_version
+  changed_when: false
+
+- debug: msg="BTSync version {{ btsync_version.stdout }}"
+  when: btsync_version.stdout
+
+- name: Download btsync tarball
+  get_url: >
+    url="{{ btsync_url[ansible_architecture] }}" 
+    dest=/var/tmp/btsync.tgz 
+    force=yes
+  register: tarball_downloaded
+  when: btsync_version.stdout != btsync_current
+
+- name: Unzip btsync binary
+  command: tar xz -f /var/tmp/btsync.tgz btsync
+    chdir="{{ btsync_dist }}"
+  when: btsync_version.stdout != btsync_current
+  notify: restart btsync

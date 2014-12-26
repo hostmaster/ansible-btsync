@@ -15,8 +15,8 @@
 
 - name: Download btsync tarball
   get_url: >
-    url="{{ btsync_url[ansible_architecture] }}" 
-    dest=/var/tmp/btsync.tgz 
+    url="{{ btsync_url[ansible_architecture] }}"
+    dest=/var/tmp/btsync.tgz
     force=yes
   register: tarball_downloaded
   when: btsync_version.stdout != btsync_current

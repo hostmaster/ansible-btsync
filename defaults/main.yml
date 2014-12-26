@@ -1,3 +1,4 @@
+---
 btsync_home: "/home/{{ btsync_user }}"
 
 btsync_dist: "/opt/btsync"
@@ -5,7 +6,7 @@ btsync_conf: "{{ btsync_home }}/btsync.conf"
 
 btsync_shell: "/usr/sbin/nologin"
 
-#btsync_settings: 
+#btsync_settings:
 #  device_name: {{ ansible_fqdn }}
 #  listening_port : 0
 #  pid_file : {{ btsync_home }}/.sync/btsync.pid
@@ -15,7 +16,7 @@ btsync_shell: "/usr/sbin/nologin"
 #    listen : 127.0.0.1:8888
 #    login : admin
 #    password : password
-#  shared_folders : 
+#  shared_folders :
 #    - dir: "{{ btsync_home }}/Folder_one"
 #      secret: PUTYOURLONGMAGICSECRETHERE
 #      known_hosts :

@@ -2,16 +2,21 @@
 
 - name: Template upstart configuration
   template: src=upstart.j2 dest=/etc/init/btsync.conf
-    owner=root group=root mode=0640 backup=yes 
+    owner=root group=root mode=0640 backup=yes
   notify: restart btsync
 
 - name: Template BTSync profile for ufw
   template: src=ufw.j2 dest=/etc/ufw/applications.d/btsync
     owner=root group=root mode=0640
-    backup=yes 
+    backup=yes
   notify: reload ufw
 
 - name: Configure firewall for BTSync
   ufw: rule=allow name='BTSync'
   notify: reload ufw
 
+- name: flush handlers to apply config changes
+  meta: flush_handlers
+
+- name: Encure btsync service is up and running
+  service: name=btsync state=started enabled=yes

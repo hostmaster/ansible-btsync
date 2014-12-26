@@ -1,0 +1,10 @@
+---
+- name: Template btsync systemd file
+  template: src=systemd_btsync.j2
+    dest=~/.config/system.d/btsync
+  notify: btsync restart
+  tags: [ 'sv' ]
+
+- name: BTSync service
+  service: name=btsync.service state=started enabled=yes
+  tags: [ 'sv' ]

@@ -1,0 +1,19 @@
+# https://gist.github.com/hostmaster/cab72b736115d72c6bf0
+[Unit]
+Description=BTSync
+Requires=network-online.service
+After=network-online.service
+Before=kodi.service
+
+[Service]
+#MemoryAccounting=true
+#MemoryLimit=128Mb
+#MemorySoftLimit=128Mb
+LimitRSS=128Mb
+CPUShares=512
+Restart=always
+RestartSec=10
+ExecStart={{ btsync_home }}/btsync --config {{ btsync_conf }} --nodaemon
+
+[Install]
+WantedBy=multi-user.target

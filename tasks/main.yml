@@ -1,15 +1,3 @@
 ---
-
-- name: This playbook is for Ubuntu so far
-  debug: msg="Please be aware of some Ubuntu specific code in the playbook. Only Ubuntu is fully supported so far"
-  when: ansible_distribution != 'Ubuntu'
-  
-- { include: install.yml, tags: ['btsync', 'upgrade' ] }
-- include: user.yml
-- { include: ubuntu.yml, when ansible_distribution == 'Ubuntu' }
-
-- name: flush handlers to apply config changes
-  meta: flush_handlers
-
-- name: Encure btsync service is up and running 
-  service: name=btsync state=started enabled=yes
+- { include: install.yml, tags: ['btsync', 'upgrade'] }
+- { include: openelec.yml }

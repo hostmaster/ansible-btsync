@@ -6,9 +6,9 @@ After=network-online.service
 Before=kodi.service
 
 [Service]
-#MemoryAccounting=true
-#MemoryLimit=128Mb
-#MemorySoftLimit=128Mb
+MemoryAccounting=true
+MemoryLimit=128Mb
+MemorySoftLimit=128Mb
 LimitRSS=128Mb
 CPUShares=512
 Restart=always
